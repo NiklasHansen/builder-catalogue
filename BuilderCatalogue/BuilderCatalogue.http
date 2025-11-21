@@ -1,0 +1,11 @@
+@BuilderCatalogue_HostAddress = http://localhost:5030
+
+GET {{BuilderCatalogue_HostAddress}}/user/brickfan35/buildable-sets
+Accept: application/json
+
+###
+
+GET {{BuilderCatalogue_HostAddress}}/user/landscape-artist/collab/tropical-island
+Accept: application/json
+
+###
