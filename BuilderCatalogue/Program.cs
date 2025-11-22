@@ -83,7 +83,7 @@ app.MapGet("/user/{userName}/collab/{setName}", async Task<Results<Ok<List<strin
     }
 
     var missingPieces = new Dictionary<Piece, int>();
-    foreach (var (piece, quantity) in set.Pieces)
+    foreach (var (piece, quantity) in set.Pieces) // TODO: Refactor into method - yield return missing quantity. In this case, add each result to a dictionary. In previous case, break on first missing piece.
     {
         var userQuantity = user.Pieces.GetValueOrDefault(piece);
         if (userQuantity < quantity)
@@ -98,9 +98,8 @@ app.MapGet("/user/{userName}/collab/{setName}", async Task<Results<Ok<List<strin
     }
 
     var users = await userService.GetUsers(cts);
-    users = users.Where(u => u.Id != user.Id /*&& u.Location == user.Location*/).ToList();
-
-    app.Logger.LogInformation("Checking {AmountUsers} users", users.Count);
+    users = users.Where(u => u.Id != user.Id).ToList();
+    
     var collabs = new List<string>();
     foreach (var u in users)
     {
@@ -131,3 +130,5 @@ app.MapGet("/user/{userName}/collab/{setName}", async Task<Results<Ok<List<strin
 });
 
 app.Run();
+
+public partial class Program {}
