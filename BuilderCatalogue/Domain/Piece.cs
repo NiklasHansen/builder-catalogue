@@ -1,3 +1,3 @@
 namespace BuilderCatalogue.Domain;
 
-internal record Piece(string Id, string Color);
+public record Piece(string Id, string Color);

@@ -1,13 +1,13 @@
 namespace BuilderCatalogue.Domain;
 
-internal class PieceCollection : Dictionary<Piece, int>
+public class PieceCollection : Dictionary<Piece, int>
 {
     /// <summary>
     /// Returns the pieces missing from this collection, to build the specified set.
     /// </summary>
     /// <param name="setToBuild">The set to build</param>
     /// <returns>List of missing pieces</returns>
-    public IEnumerable<(Piece, int)> MissingPieces(PieceCollection setToBuild)
+    public IEnumerable<(Piece Piece, int Quantity)> MissingPieces(PieceCollection setToBuild)
     {
         foreach (var (piece, quantity) in setToBuild)
         {
