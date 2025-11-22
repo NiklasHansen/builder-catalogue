@@ -24,7 +24,10 @@ internal class SetsService(HttpClient httpClient, IColorService colorService) : 
     public async Task<Set?> GetSetByName(string name, CancellationToken cts = default)
     {
         var response = await httpClient.GetAsync($"/api/set/by-name/{name}", cts);
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
 
         var info = await response.Content.ReadFromJsonAsync<SetInfo>(cts);
         if (info is null)
@@ -38,7 +41,10 @@ internal class SetsService(HttpClient httpClient, IColorService colorService) : 
     public async Task<Set?> GetSetById(string id, CancellationToken cts = default)
     {
         var response = await httpClient.GetAsync($"/api/set/by-id/{id}", cts);
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
 
         var responseBody = await response.Content.ReadFromJsonAsync<SetResponse>(cts);
         if (responseBody is null)

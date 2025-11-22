@@ -24,7 +24,10 @@ internal class UserService(HttpClient httpClient, IColorService colorService) : 
     public async Task<User?> GetUserByName(string name, CancellationToken cts = default)
     {
         var response = await httpClient.GetAsync($"/api/user/by-username/{name}", cts);
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
 
         var info = await response.Content.ReadFromJsonAsync<UserInfo>(cts);
         if (info is null)
@@ -38,7 +41,10 @@ internal class UserService(HttpClient httpClient, IColorService colorService) : 
     public async Task<User?> GetUserById(string id, CancellationToken cts = default)
     {
         var response = await httpClient.GetAsync($"/api/user/by-id/{id}", cts);
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
 
         var responseBody = await response.Content.ReadFromJsonAsync<UserResponse>(cts);
         if (responseBody is null)

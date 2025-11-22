@@ -25,8 +25,23 @@ public class BuildableSetsTests
         Assert.NotNull(responseBody);
         Assert.Equal(buildableSets, responseBody.Count);
     }
+
+    [Theory]
+    [InlineData("user-not-found")]
+    public async Task BuildableSets_NotFound(string userName)
+    {
+        // Arrange
+        var waf = new WebApplicationFactory<Program>();
+        var client = waf.CreateClient();
+        
+        // Act
+        var response = await client.GetAsync($"user/{userName}/buildable-sets");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
     
     // TODO: Add tests for verifying _which_ sets are returned
-    // TODO: Add tests for error cases (service unavailable, user not found)
+    // TODO: Add tests for error cases (service unavailable, etc)
     // TODO: Add test for if user has no blocks in inventory
 }

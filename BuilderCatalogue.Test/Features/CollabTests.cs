@@ -10,7 +10,7 @@ public class CollabTests
     [InlineData("landscape-artist", "tropical-island", 1)]
     // TODO: Add test for 0 collabs
     // TODO: Add test for multiple possible collabs
-    public async Task BuildableSets_UserCanBuildSets(string userName, string setName, int amountOfPossibleCollabs)
+    public async Task Collab(string userName, string setName, int amountOfPossibleCollabs)
     {
         // Arrange
         var waf = new WebApplicationFactory<Program>();
@@ -27,6 +27,22 @@ public class CollabTests
         Assert.Equal(amountOfPossibleCollabs, responseBody.Count);
     }
     
+    [Theory]
+    [InlineData("user-not-found", "tropical-island")]
+    [InlineData("landscape-artist", "set-not-found")]
+    public async Task Collab_NotFound(string userName, string setName)
+    {
+        // Arrange
+        var waf = new WebApplicationFactory<Program>();
+        var client = waf.CreateClient();
+        
+        // Act
+        var response = await client.GetAsync($"user/{userName}/collab/{setName}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+    
     // TODO: Add test for verifying _which_ users are returned
-    // TODO: Tests for error cases (services unavailable, user not found, set not found)
+    // TODO: Tests for error cases (services unavailable, etc)
 }
