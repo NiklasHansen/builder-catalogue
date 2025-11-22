@@ -30,18 +30,7 @@ public static class BuildableSets
                     return;
                 }
 
-                var buildable = true;
-                foreach (var (piece, quantity) in set.Pieces)
-                {
-                    var userQuantity = user.Pieces.GetValueOrDefault(piece);
-                    if (userQuantity < quantity)
-                    {
-                        buildable = false;
-                        break;
-                    }
-                }
-
-                if (buildable)
+                if (!user.Pieces.MissingPieces(set.Pieces).Any())
                 {
                     buildableSets.Add(set.Name);
                 }

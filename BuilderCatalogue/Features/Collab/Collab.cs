@@ -23,14 +23,10 @@ public static class Collab
                 return TypedResults.NotFound();
             }
 
-            var missingPieces = new Dictionary<Piece, int>();
-            foreach (var (piece, quantity) in set.Pieces) // TODO: Refactor into method - yield return missing quantity. In this case, add each result to a dictionary. In previous case, break on first missing piece.
+            var missingPieces = new PieceCollection();
+            foreach (var (piece, quantity) in user.Pieces.MissingPieces(set.Pieces))
             {
-                var userQuantity = user.Pieces.GetValueOrDefault(piece);
-                if (userQuantity < quantity)
-                {
-                    missingPieces.Add(piece, quantity - userQuantity);
-                }
+                missingPieces.Add(piece, quantity);
             }
 
             if (!missingPieces.Any())
@@ -50,18 +46,7 @@ public static class Collab
                     continue;
                 }
 
-                var possibleCollab = true;
-                foreach (var (missingPiece, quantity) in missingPieces)
-                {
-                    var userQuantity = otherUser.Pieces.GetValueOrDefault(missingPiece);
-                    if (userQuantity < quantity)
-                    {
-                        possibleCollab = false;
-                        break;
-                    }
-                }
-
-                if (possibleCollab)
+                if (!otherUser.Pieces.MissingPieces(missingPieces).Any())
                 {
                     collabs.Add(otherUser.Username);
                 }
