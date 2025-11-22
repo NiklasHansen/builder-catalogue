@@ -32,7 +32,7 @@ internal class SetsService(HttpClient httpClient, IColorService colorService) : 
             return null;
         }
 
-        return await GetSetById(info.Id);
+        return await GetSetById(info.Id, cts);
     }
 
     public async Task<Set?> GetSetById(string id, CancellationToken cts = default)
@@ -48,7 +48,7 @@ internal class SetsService(HttpClient httpClient, IColorService colorService) : 
         
         var colors = await colorService.GetColors(cts);
         
-        var pieces = new Dictionary<Piece, int>();
+        var pieces = new PieceCollection();
         foreach (var p in responseBody.Pieces)
         {
             var color = colors.GetValueOrDefault(p.Part.Material.ToString());

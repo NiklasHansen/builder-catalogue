@@ -2,5 +2,5 @@ namespace BuilderCatalogue.Domain;
 
 internal record Set : SetInfo
 {
-    public required Dictionary<Piece, int> Pieces { get; init; }
+    public required PieceCollection Pieces { get; init; }
 }

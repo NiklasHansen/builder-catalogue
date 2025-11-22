@@ -32,7 +32,7 @@ internal class UserService(HttpClient httpClient, IColorService colorService) : 
             return null;
         }
 
-        return await GetUserById(info.Id);
+        return await GetUserById(info.Id, cts);
     }
 
     public async Task<User?> GetUserById(string id, CancellationToken cts = default)
@@ -48,7 +48,7 @@ internal class UserService(HttpClient httpClient, IColorService colorService) : 
 
         var colors = await colorService.GetColors(cts);
 
-        var pieces = new Dictionary<Piece, int>();
+        var pieces = new PieceCollection();
         foreach (var p in responseBody.Collection)
         {
             foreach (var v in p.Variants)
