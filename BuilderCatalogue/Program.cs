@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using BuilderCatalogue.Domain;
+using BuilderCatalogue.Features.BuildableSets;
 using BuilderCatalogue.Options;
 using BuilderCatalogue.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -27,46 +28,7 @@ builder.Services.AddSingleton<IColorService, ColorService>();
 
 var app = builder.Build();
 
-app.MapGet("/user/{userName}/buildable-sets", async Task<Results<Ok<IEnumerable<string>>, NotFound>>([FromServices] IUserService userService, [FromServices] ISetsService setsService, [FromRoute] string userName, CancellationToken cts = default) =>
-{
-    var user = await userService.GetUserByName(userName, cts);
-    if (user is null)
-    {
-        return TypedResults.NotFound();
-    }
-    
-    var buildableSets = new ConcurrentBag<string>();
-
-    var sets = await setsService.GetSets(); // 15
-    sets = sets.Where(s => s.TotalPieces <= user.BrickCount).ToList(); // 13
-    
-    await Parallel.ForEachAsync(sets, async (setInfo, cancellationToken) =>
-    {
-        var set = await setsService.GetSetById(setInfo.Id, cancellationToken);
-        if (set is null)
-        {
-            return;
-        }
-
-        var buildable = true;
-        foreach (var (piece, quantity) in set.Pieces)
-        {
-            var userQuantity = user.Pieces.GetValueOrDefault(piece);
-            if (userQuantity < quantity)
-            {
-                buildable = false;
-                break;
-            }
-        }
-
-        if (buildable)
-        {
-            buildableSets.Add(set.Name);
-        }
-    });
-    
-    return TypedResults.Ok((IEnumerable<string>)buildableSets);
-});
+app.MapBuildableSets();
 
 app.MapGet("/user/{userName}/collab/{setName}", async Task<Results<Ok<List<string>>, NotFound>>([FromServices] IUserService userService, [FromServices] ISetsService setsService, [FromRoute] string userName, [FromRoute] string setName, CancellationToken cts = default) =>
 {
